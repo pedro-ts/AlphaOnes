@@ -1,0 +1,118 @@
+.login-container{
+    display: flex;
+    height: 100vh;
+    background-color: var(--cor-secundaria);
+}
+/* Define que ambos os containers filhos terão 50% da largura */
+.login-form-container, .login-logo-container {
+  width: 50%;
+}
+
+/* Apenas para visualização */
+.login-form-container {
+  background-color: var(--cor-secundaria);
+  /* Adicione outros estilos como padding para alinhar o formulário */
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-logo-container {
+  background: linear-gradient(to top, var(--cor-secundaria), var(--cor-primaria));
+  padding: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilos adicionais para o formulário */
+form {
+  background-color: var(--cor-primaria-bg);
+  border-radius: var(--border-radius-padrao);
+  padding: 2rem;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px; /* Limita a largura máxima do formulário */
+}
+.img-login-form{
+  display: flex;
+  justify-content: center;
+}
+.img-login-form img{
+  width: 30%;
+}
+.title {
+  color: var(--cor-terciaria);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-form-container form input{
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: none;
+    border-radius: var(--border-radius-padrao);
+    font-size: 1rem;
+    background-color: var(--cor-secundaria-bg);
+    color: var(--cor-terciaria);
+}
+
+.login-form-container form button{
+    background-color: var(--cor-terciaria);
+    color: var(--cor-secundaria);
+    border: none;
+    padding: 0.75rem;
+    border-radius: var(--border-radius-padrao);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+form .message {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+.login-logo-container img{
+    max-width: 70%;
+    height: auto;
+    display: block;
+    margin: auto;
+}
+.signup-container{
+    display: flex;
+    flex-direction: row-reverse;
+}
+/* gpt */
+/* usa os mesmos keyframes do Login; apenas invertendo lados */
+:root{
+  --page-anim: 600ms;
+  --page-ease: cubic-bezier(.2,.7,.2,1);
+}
+.login-container{ overflow: hidden; }
+
+/* copie estes keyframes caso este arquivo não importe o Login.css */
+@keyframes slideInLeft{
+  from{opacity:0; transform:translateX(-64px) scale(.98);}
+  to{opacity:1; transform:translateX(0) scale(1);}
+}
+@keyframes slideInRight{
+  from{opacity:0; transform:translateX(64px) scale(.98);}
+  to{opacity:1; transform:translateX(0) scale(1);}
+}
+
+/* aplica nas metades da tela do SIGNUP (invertido) */
+.signup-container .login-form-container{
+  animation: slideInRight var(--page-anim) var(--page-ease) both;
+  will-change: transform;
+}
+.signup-container .login-logo-container{
+  animation: slideInLeft var(--page-anim) var(--page-ease) both;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .signup-container .login-form-container,
+  .signup-container .login-logo-container{ animation: none !important; }
+}
