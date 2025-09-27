@@ -3,11 +3,13 @@
 :root {
   --cor-primaria: rgb(80, 80, 223);
     --cor-primaria-bg: rgba(80, 80, 223, 0.527);
+    --cor-primaria-escura: rgb(24, 24, 132);
     --cor-secundaria: #1c1c1c;
     --cor-secundaria-bg: #1c1c1c6b;
     --cor-terciaria: rgb(240, 236, 255);
     --cor-terciaria-bg: #ffffff79;
     --cor-link: rgb(240, 236, 255);
+    --cor-aviso: #ff4040;
   --espacamento-padrao: 16px;
   --border-radius-padrao: 16px;
   /* Fonte */
@@ -18,6 +20,8 @@
   /* login/signup */
   --page-anim: 600ms;
   --page-ease: cubic-bezier(.2,.7,.2,1);
+  /* Taskbar */
+  --taskbar-height: 3.5rem;
 }
 
 /* reset css */
@@ -32,7 +36,7 @@ a{
 /* Alert */
 .alert {
     padding: 1rem;
-    background-color: #ff4040;
+    background-color: var(--cor-aviso);
     color: white;
     border-radius: 0.5rem;
     margin-bottom: 1rem;

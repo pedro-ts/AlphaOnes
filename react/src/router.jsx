@@ -6,6 +6,7 @@ import Users from "./views/Users/Users";
 import Dashboard from "./views/Dashboard/Dashboard";
 import NotFound from "./views/NotFound/NotFound";
 import Home from "./views/Home/Home";
+import Estatisticas from "./views/Estatisticas/Estatisticas";
 // Components
 import GuestLayout from "./components/GuestLayout/GuestLayout";
 import DefaultLayout from "./components/DefaultLayout/DefaultLayout";
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path: "/home",
         element: <Home />,
+      },
+      {
+        path: "/estatisticas",
+        element: <Estatisticas />,
       },
       {
         path: "/users",

@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Pixelify+Sans:wght@400..700&display=swap');
+
+/* Tema base */
+:root{
+  --clock-size-min: 3rem;
+  --clock-size-max: 10rem;
+  --clock-gradient: linear-gradient(
+    135deg,
+    #ffffff,
+    var(--cor-terciaria),
+    var(--cor-quaternaria),
+    #ffffff
+  );
+  --clock-shadow: 0 0 20px rgba(255,255,255,0.15);
+  --clock-shadow-strong: 0 0 40px rgba(255,255,255,0.20);
+}
+
+/* Relógio */
+.relogio{
+  font-family: "Black Ops One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: .06em;
+
+  /* responsivo */
+  font-size: clamp(var(--clock-size-min), 8vw, var(--clock-size-max));
+
+  /* gradiente animado no texto */
+  background: var(--clock-gradient);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #fff; /* base branca */
+
+  /* brilho e profundidade */
+  text-shadow:
+    0 1px 0 rgba(0,0,0,0.35),
+    0 2px 8px rgba(0,0,0,0.2);
+
+  /* suavidade e performance */
+  will-change: transform, opacity, filter, background-position;
+  animation:
+    gradientShift 6s ease-in-out infinite,
+    glowPulse 3.5s ease-in-out infinite;
+
+  /* centralização opcional quando usado isolado */
+  display: inline-block;
+  position: relative;
+}
+
+/* Hover: intensifica brilho e dá leve lift */
+.relogio:hover{
+  filter: drop-shadow(var(--clock-shadow-strong));
+  transform: translateY(-2px) scale(1.01);
+  transition: transform .3s ease, filter .3s ease;
+}
+
+/* “Shimmer” sutil passando sobre o texto */
+.relogio::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.25) 50%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: shimmer 2.8s linear infinite;
+  mask: radial-gradient(closest-side, #000 80%, transparent 82%) content-box;
+}
+
+/* Container utilitário caso queira recorte limpo do ::after */
+.relogio-wrap{
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+
+/* Seleção bonita */
+.relogio::selection{
+  background: rgba(255,255,255,0.15);
+}
+
+/* Acessibilidade: reduz animação */
+@media (prefers-reduced-motion: reduce){
+  .relogio{ animation: none; }
+  .relogio::after{ display: none; }
+}
+
+/* Keyframes */
+@keyframes gradientShift{
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glowPulse{
+  0%,100%{ filter: drop-shadow(var(--clock-shadow)); }
+  50%    { filter: drop-shadow(var(--clock-shadow-strong)); }
+}
+
+@keyframes shimmer{
+  0%   { transform: translateX(-120%); opacity: .0; }
+  15%  { opacity: .35; }
+  50%  { transform: translateX(120%); opacity: .2; }
+  100% { transform: translateX(200%); opacity: .0; }
+}
