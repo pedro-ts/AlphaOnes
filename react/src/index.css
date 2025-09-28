@@ -12,6 +12,8 @@
     --cor-aviso: #ff4040;
   --espacamento-padrao: 16px;
   --border-radius-padrao: 16px;
+  --h: 40px;
+  --radius: 12px;
   /* Fonte */
   font-family: "Sora", sans-serif;
   font-optical-sizing: auto;
@@ -74,4 +76,56 @@ a{
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* INPUT PADRÃO */
+.input-dropdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  background: var(--cor-secundaria);
+  color: var(--cor-terciaria);
+
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-dropdown:hover {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 2px rgba(80,80,223,0.25);
+}
+.input-dropdown:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(80,80,223,0.35);
+}
+
+.input-dropdown .badge {
+  background: var(--cor-primaria);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  padding: 0 6px;
+}
+
+.input-dropdown .caret {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(255,255,255,.8);
+  margin-left: 4px;
 }

@@ -112,6 +112,25 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+        'external' => [
+            'driver'   => env('EXT_DB_CONNECTION', 'mysql'),
+            'host'     => env('EXT_DB_HOST'),
+            'port'     => env('EXT_DB_PORT'),
+            'database' => env('EXT_DB_DATABASE'),
+            'username' => env('EXT_DB_USERNAME'),
+            'password' => env('EXT_DB_PASSWORD'),
+            'charset'  => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix'   => '',
+            'strict'   => true,
+            // SSL MySQL (opcional)
+            'options'  => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA   => env('EXT_DB_SSL_CA'),
+                PDO::MYSQL_ATTR_SSL_CERT => env('EXT_DB_SSL_CERT'),
+                PDO::MYSQL_ATTR_SSL_KEY  => env('EXT_DB_SSL_KEY'),
+            ]) : [],
+        ],
+
 
     ],
 

@@ -1,0 +1,156 @@
+/* Cores por variáveis globais:
+   defina em :root no seu app:
+   --cor-primaria, --cor-secundaria, --cor-primaria-escura
+   Coloque fallbacks aqui se quiser. */
+
+.welcome-container{
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+
+  /* Fundo gradiente animado */
+  background: linear-gradient(
+    120deg,
+    var(--cor-primaria, #6a00ff),
+    var(--cor-secundaria, #00d4ff),
+    var(--cor-primaria-escura, #24005a)
+  );
+  background-size: 300% 300%;
+  animation: gradientShift 12s ease-in-out infinite;
+
+  /* Fade final do overlay – suave */
+  transition: opacity var(--d-overlay-out) cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 1;
+
+  /* Performance */
+  will-change: opacity, background-position;
+
+  /* Texto branco por padrão */
+  color: #fff;
+}
+.welcome-container.transparent{
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes gradientShift{
+  0%{ background-position: 0% 50%; }
+  50%{ background-position: 100% 50%; }
+  100%{ background-position: 0% 50%; }
+}
+
+.layer{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 2rem;
+  pointer-events: none;
+}
+
+/* 1) "Olá, {nome}" */
+.hi{
+  font-size: clamp(24px, 6vw, 64px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: inherit;
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  transition:
+    opacity var(--d-ola-in) ease,
+    transform var(--d-ola-in) ease;
+}
+.visible .hi{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.hidden .hi{
+  opacity: 0;
+  transform: translateY(-6px) scale(0.995);
+  transition:
+    opacity var(--d-ola-out) ease,
+    transform var(--d-ola-out) ease;
+}
+
+.name{
+  display: inline-block;
+  padding: 0 .25em;
+  background: rgba(255,255,255,0.12);
+  border-radius: .4em;
+  backdrop-filter: blur(2px);
+}
+
+/* 2) Texto "Seja bem-vindo(a) ao" */
+.subtitle{
+  font-size: clamp(16px, 3.5vw, 28px);
+  color: #e9f1ff;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--d-bem-in) ease,
+    transform var(--d-bem-in) ease;
+}
+.bem.visible .subtitle{
+  opacity: 1;
+  transform: translateY(0);
+}
+/* fade-out do bloco "bem" */
+.bem.hidden .subtitle{
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity var(--d-bem-out) ease,
+    transform var(--d-bem-out) ease;
+}
+
+/* 3) Logo sozinha, centralizada e com fades próprios */
+.logoLayer{
+  /* usa o mesmo grid central do .layer */
+}
+.logoFinal{
+  width: min(40vw, 360px);
+  max-width: 70%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 28px rgba(0,0,0,.45));
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity var(--d-logo-in) ease,
+    transform var(--d-logo-in) ease;
+}
+.logoLayer.visible .logoFinal{
+  opacity: 1;
+  transform: scale(1);
+}
+.logoFinal.hidden{
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity var(--d-logo-out) ease,
+    transform var(--d-logo-out) ease;
+}
+
+/* Dica para pular */
+.hint{
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.25);
+  padding: 6px 10px;
+  border-radius: 999px;
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: .02em;
+  backdrop-filter: blur(2px);
+}
+
+/* Acessibilidade: foco para receber keydown */
+.welcome-container:focus{
+  outline: none;
+}

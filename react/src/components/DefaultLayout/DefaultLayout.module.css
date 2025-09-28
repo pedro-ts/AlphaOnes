@@ -1,22 +1,77 @@
 /* Container do Main */
 .defaultLayout-container {
-    background-color: var(--cor-secundaria);
-    min-height: 100vh;
-    height: fit-content;
-    max-height: fit-content;
-    max-width: 100vw;
-    width: 100vw;
-    min-width: 100vw;
+  background-color: var(--cor-secundaria);
+  min-height: 100vh;
+  height: fit-content;
+  max-height: fit-content;
+  max-width: 100vw;
+  width: 100vw;
+  min-width: 100vw;
 }
 
-/* Main */
+/* Palco das views com transição */
+.stage{
+  position: relative;
+  min-height: calc(100vh - var(--taskbar-height));
+  height: calc(100vh - var(--taskbar-height));
+  width: 100vw;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Pane que envolve cada rota renderizada */
+.viewPane{
+  height: 100%;
+  will-change: opacity, transform, filter, clip-path;
+  transform-origin: center;
+}
+
+/* Estados da transição (abrir app) */
+.view-enter{
+  opacity: 0;
+  transform: scale(0.96);
+  filter: blur(6px);
+  clip-path: inset(2% round 16px);
+}
+.view-enter-active{
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+  clip-path: inset(0 round 0);
+  transition:
+    opacity 320ms cubic-bezier(.2,.6,.2,1),
+    transform 320ms cubic-bezier(.2,.6,.2,1),
+    filter 320ms ease,
+    clip-path 320ms ease;
+}
+
+/* Estados da transição (fechar app) */
+.view-exit{
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+  clip-path: inset(0 round 0);
+}
+.view-exit-active{
+  opacity: 0;
+  transform: scale(0.98);
+  filter: blur(4px);
+  clip-path: inset(4% round 24px);
+  transition:
+    opacity 260ms cubic-bezier(.4,0,.2,1),
+    transform 260ms cubic-bezier(.4,0,.2,1),
+    filter 260ms ease,
+    clip-path 260ms ease;
+}
+
+/* Main antigo (mantido para compatibilidade, não é usado) */
 main{
-    min-height: calc(100vh - var(--taskbar-height));
-    height: calc(100vh - var(--taskbar-height));
-    max-height: fit-content;
-    width: 100vw;
-    min-width: 100vw;
-    max-width: 100vw;
+  min-height: calc(100vh - var(--taskbar-height));
+  height: calc(100vh - var(--taskbar-height));
+  max-height: fit-content;
+  width: 100vw;
+  min-width: 100vw;
+  max-width: 100vw;
 }
 
 /* Barra de tarefas */
@@ -27,7 +82,7 @@ main{
   width: 100vw;
   height: var(--taskbar-height);
   z-index: 50;
-
+  border-radius: 1rem 1rem 0 0;
   background: linear-gradient(
     270deg,
     var(--cor-primaria-escura),
@@ -39,52 +94,32 @@ main{
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  /* box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.4); */
   box-shadow: 0 -1px 25px var(--cor-primaria-bg);
-
   animation: gradientMove 5s ease-in-out infinite;
 }
 @keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.taskbar-container .left-container, .taskbar-container .right-container{
-    /* background-color: red; */
-    height: 100%;
-    display: flex;
-    align-items: center;
-}
-.taskbar-container .left-container{
-    margin-left: 1rem;
-}
+.taskbar-container .left-container,
 .taskbar-container .right-container{
-    margin-right: 1rem;
-    gap: 1rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.taskbar-container .left-container{ margin-left: 1rem; }
+.taskbar-container .right-container{
+  margin-right: 1rem;
+  gap: 1rem;
 }
 
-/* Icone right -- inicio */
-.icone-logout{
-    color: var(--cor-aviso);
-    font-size: 2rem;
-}
-.taskbar-container .right-container svg{
-    display: flex;
-}
-/* Icone right -- inicio */
-.icone-home{
-    color: var(--cor-terciaria);
-    font-size: 2rem;
-}
-/* Icone right -- fim */
+/* Ícones */
+.icone-logout{ color: var(--cor-aviso); font-size: 2rem; }
+.taskbar-container .right-container svg{ display: flex; }
+.icone-home{ color: var(--cor-terciaria); font-size: 2rem; }
+
 /* ANIMAÇÃO DOS ICONES ============================== INICIO */
 :root {
   --tb-hover-bg: rgba(255, 255, 255, 0.08);
@@ -94,7 +129,6 @@ main{
   --tb-ripple-alpha: .22;
 }
 
-/* wrappers clicáveis dos ícones (mantendo seu HTML: .btn-dashboard / .btn-logout) */
 .btn-dashboard,
 .btn-logout {
   display: grid;
@@ -112,7 +146,6 @@ main{
     backdrop-filter 160ms ease;
 }
 
-/* hover: pill translúcido + leve lift */
 .btn-dashboard:hover,
 .btn-logout:hover {
   background-color: var(--tb-hover-bg);
@@ -121,7 +154,6 @@ main{
   box-shadow: var(--tb-shadow);
 }
 
-/* click */
 .btn-dashboard:active,
 .btn-logout:active {
   background-color: var(--tb-active-bg);
@@ -129,7 +161,6 @@ main{
   box-shadow: 0 2px 8px rgba(0,0,0,.25) inset;
 }
 
-/* foco acessível */
 .btn-dashboard:focus-visible,
 .btn-logout:focus-visible {
   outline: 2px solid rgba(255,255,255,.35);
@@ -137,7 +168,6 @@ main{
   border-radius: calc(var(--tb-radius) + 2px);
 }
 
-/* ripple sutil no hover */
 .btn-dashboard::after,
 .btn-logout::after {
   content: "";
@@ -154,12 +184,11 @@ main{
   animation: tbRipple 800ms ease-out forwards;
 }
 @keyframes tbRipple {
-  0%   { transform: translate(-50%,-50%) scale(0);   opacity: 0;   }
+  0%   { transform: translate(-50%,-50%) scale(0);   opacity: 0; }
   25%  { opacity: var(--tb-ripple-alpha); }
-  100% { transform: translate(-50%,-50%) scale(2.4); opacity: 0;   }
+  100% { transform: translate(-50%,-50%) scale(2.4); opacity: 0; }
 }
 
-/* ícones internos (mantém suas cores atuais) */
 .icone-home,
 .icone-logout {
   line-height: 1;
@@ -170,7 +199,6 @@ main{
   filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
 }
 
-/* respeita redução de movimento */
 @media (prefers-reduced-motion: reduce) {
   .btn-dashboard,
   .btn-logout {
@@ -183,14 +211,18 @@ main{
     display: none;
   }
 }
+
 /* Pipe do logout */
-/* adicionar estas regras */
 .btn-logout {
   position: relative;
-  margin-left: .6rem;   /* espaçamento extra só antes do logout */
-  padding-left: .8rem;  /* espaço interno para a “pipe” */
+  margin-left: .6rem;
+  padding-left: .8rem;
+  background: transparent;
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
-
 .btn-logout::before {
   content: "";
   position: absolute;
@@ -199,21 +231,10 @@ main{
   transform: translateY(-50%);
   width: 1px;
   height: 60%;
-  background: var(--cor-aviso); /* mesma cor do ícone de logout */
+  background: var(--cor-aviso);
   border-radius: 1px;
   opacity: .9;
 }
-/* erro do botão logout bg */
-/* reset do <button> logout */
-.btn-logout {
-  background: transparent;
-  border: 0;
-  appearance: none;
-  -webkit-appearance: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* não pintar em nenhum estado “ativo/focado/ocupado/desabilitado” */
 .btn-logout:focus,
 .btn-logout:focus-visible,
 .btn-logout:active,
@@ -224,8 +245,6 @@ main{
   transform: none !important;
   outline: none;
 }
-
-/* se não quiser cor nem no hover do logout */
 .btn-logout:hover {
   background: transparent;
   box-shadow: none;
@@ -234,5 +253,5 @@ main{
 /* ANIMAÇÃO DOS ICONES ============================== FIM */
 
 .taskbar-container .left-container img{
-    width: 5rem;
+  width: 5rem;
 }

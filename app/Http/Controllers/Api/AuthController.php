@@ -24,14 +24,17 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
         ]);
 
-        $token = $user->createToken('main')->plainTextToken;
+        // $token = $user->createToken('main')->plainTextToken;
+
+        $expiresAt = now()->addMinutes(60); // ajuste o TTL desejado
+        $token = $user->createToken('main', ['*'], $expiresAt);
 
         // return response([
         //     'user' => $user,
         //     'token' => $token
         // ])
 
-        return response(compact('user', 'token'));
+        return response(compact('user', 'token', 'expiresAt'));
     }
     public function login(LoginRequest $request){
         $credentials = $request->validated();
@@ -43,10 +46,12 @@ class AuthController extends Controller
         };
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        
-        $token = $user->createToken('main')->plainTextToken;
 
-        return response(compact('user', 'token'));
+        // $token = $user->createToken('main')->plainTextToken;
+        $expiresAt = now()->addMinutes(60); // ajuste o TTL desejado
+        $token = $user->createToken('main', ['*'], $expiresAt);
+
+        return response(compact('user', 'token', 'expiresAt'));
     }
     public function logout(Request $request){
         /**

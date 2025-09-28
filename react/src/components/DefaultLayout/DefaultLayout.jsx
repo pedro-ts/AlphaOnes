@@ -1,9 +1,12 @@
-import React, { useEffect } from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { SwitchTransition, CSSTransition } from "react-transition-group";
 import styles from "./DefaultLayout.module.css";
+import Welcome from "../../components/Welcome/Welcome";
 // context
 import { useStateContext } from "../../context/ContextProvider";
 import axiosClient from "../../axios-client";
+
 // Ícones
 import { IoLogOut } from "react-icons/io5";
 import { TbHomeShare } from "react-icons/tb";
@@ -12,17 +15,23 @@ import { TbHomeShare } from "react-icons/tb";
 import Loading from "../../components/Loading/Loading";
 import { useLoading } from "../../context/LoadingContext";
 
+// hooks
+import useAuthGuard from "../../hooks/useAuthGuard";
+
 const DefaultLayout = () => {
   const navigate = useNavigate();
-  const { user, token, notification, setUser, setToken } = useStateContext();
+  const location = useLocation();
+  const nodeRef = useRef(null);
+
+  const { user, token, notification, setUser, setToken, welcome, setWelcome } = useStateContext();
   const { isLoading, label, setLabel, show, hideWithMin } = useLoading();
 
-  // redireciona sem quebrar a ordem dos hooks
+  useAuthGuard({ skewMs: 30_000, autoFetchUser: true });
+
   useEffect(() => {
     if (!token) navigate("/login", { replace: true });
   }, [token, navigate]);
 
-  // carrega usuário somente se houver token
   useEffect(() => {
     if (!token) return;
     let alive = true;
@@ -39,7 +48,6 @@ const DefaultLayout = () => {
 
   const onLogout = async (e) => {
     e.preventDefault();
-    // mostra imediatamente (sem delay) e garante duração mínima
     setLabel("Saindo...");
     show();
     try {
@@ -52,43 +60,82 @@ const DefaultLayout = () => {
     navigate("/login", { replace: true });
   };
 
+
+  useEffect(() => {
+    if (welcome) {
+      if (!welcome) return;
+
+      console.log(user?.name); // log imediato ao abrir a tela
+
+      const t = setTimeout(() => {
+        setWelcome(false); // remove a div da tela
+      }, 8800); // 8600 ms
+    }
+    return () => clearTimeout(); // limpeza se desmontar/alternar rápido
+  }, [welcome, user, setWelcome]);
+
+
   return (
     <div className={styles["defaultLayout-container"]}>
       <Loading active={isLoading} text={label} />
+      {welcome && (
+        <Welcome
+          name={user.name || "visitante"}
+          logoSrc="/logo.png"
+          onFinish={() => console.log("Boas-vindas finalizada")}
+        />
+      )}
 
       {notification && <div className="notification">{notification}</div>}
 
-      <main>
-        <Outlet />
+      <main className={styles.stage}>
+        <SwitchTransition mode="out-in">
+          <CSSTransition
+            key={location.pathname}
+            nodeRef={nodeRef}
+            timeout={{ enter: 320, exit: 260 }}
+            classNames={{
+              enter: styles["view-enter"],
+              enterActive: styles["view-enter-active"],
+              exit: styles["view-exit"],
+              exitActive: styles["view-exit-active"],
+            }}
+          >
+            <div ref={nodeRef} className={styles.viewPane}>
+              <Outlet />
+            </div>
+          </CSSTransition>
+        </SwitchTransition>
       </main>
+      {!welcome && (
+        <footer>
+          <div className={styles["taskbar-container"]}>
+            <div className={styles["left-container"]}>
+              <img src="logo.png" alt="Logo Alpha One's" />
+            </div>
 
-      <footer>
-        <div className={styles["taskbar-container"]}>
-          <div className={styles["left-container"]}>
-            <img src="logo.png" alt="Logo Alpha One's" />
+            <div className={styles["right-container"]}>
+              <Link
+                to="/home"
+                className={styles["btn-dashboard"]}
+                aria-label="Início"
+              >
+                <TbHomeShare className={styles["icone-home"]} />
+              </Link>
+              <button
+                type="button"
+                onClick={onLogout}
+                className={styles["btn-logout"]}
+                disabled={isLoading}
+                aria-busy={isLoading}
+                aria-label="Sair"
+              >
+                <IoLogOut className={styles["icone-logout"]} />
+              </button>
+            </div>
           </div>
-
-          <div className={styles["right-container"]}>
-            <Link
-              to="/home"
-              className={styles["btn-dashboard"]}
-              aria-label="Início"
-            >
-              <TbHomeShare className={styles["icone-home"]} />
-            </Link>
-            <button
-              type="button"
-              onClick={onLogout}
-              className={styles["btn-logout"]}
-              disabled={isLoading}
-              aria-busy={isLoading}
-              aria-label="Sair"
-            >
-              <IoLogOut className={styles["icone-logout"]} />
-            </button>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 };

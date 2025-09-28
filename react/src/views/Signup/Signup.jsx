@@ -14,7 +14,7 @@ const Signup = () => {
 
   // Como aqui será feito o a criação de conta e login automatico temos que atualizar o contexto que faz a autenticação se o usuario está logado ou não
   // Importação dos set's do contexto
-  const { setUser, setToken } = useStateContext();
+  const { setUser, setToken, setExpiresAt, setWelcome } = useStateContext();
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -30,7 +30,9 @@ const Signup = () => {
       .post("/signup", payload)
       .then(({ data }) => {
         setUser(data.user);
-        setToken(data.token);
+        setToken(data.token.plainTextToken);
+        setExpiresAt(data.expiresAt);
+        setWelcome(true);
       })
       .catch((error) => {
         const response = error.response;

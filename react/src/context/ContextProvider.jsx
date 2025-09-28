@@ -4,6 +4,10 @@ const StateContext = createContext({
     currentUser: null,
     token: null,
     notification: null,
+    expiresAt: null,
+    welcome: false,
+    setWelcome: () => {},
+    setExpiresAt: () => {},
     setUser: () => {},
     setToken: () => {},
     setNotification: () => {}
@@ -11,8 +15,10 @@ const StateContext = createContext({
 
 export const ContextProvider = ({children}) => {
     const [user, setUser] = useState({});
-    const [notification, _setNotification] = useState('')
+    const [notification, _setNotification] = useState('');
+    const [welcome, setWelcome] = useState(false);
     const [token, _setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
+    const [expiresAt, _setExpiresAt] = useState(localStorage.getItem('EXPIRES_AT'));
     // const [token, _setToken] = useState(123);
 
 
@@ -31,15 +37,27 @@ export const ContextProvider = ({children}) => {
             localStorage.removeItem('ACCESS_TOKEN')
         }
     }
+    const setExpiresAt = (expiresAt) => {
+        _setExpiresAt(expiresAt); //Armazena o token no state do token(o padrão criado acima)
+        if (expiresAt){
+            localStorage.setItem('EXPIRES_AT', expiresAt) //Armazenamos no local para que sempre que o usuario recarregar a pagina ele manter a informação que está com o token ainda
+        } else {
+            localStorage.removeItem('EXPIRES_AT')
+        }
+    }
 
 return(
     <StateContext.Provider value={{
         user,
         token,
+        expiresAt,
+        setExpiresAt,
         setUser,
         setToken,
         notification,
-        setNotification
+        setNotification,
+        welcome,
+        setWelcome,
     }}>
         {children}
     </StateContext.Provider>

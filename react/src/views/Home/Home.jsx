@@ -1,10 +1,16 @@
 import styles from './Home.module.css'
 import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+// hooks
+import { useStateContext } from "../../context/ContextProvider";
 // Components
 import Icon from '../../components/Icon/Icon';
 import Relogio from '../../components/Relogio/Relogio';
+import Welcome from '../../components/Welcome/Welcome';
 
 const Home = () => {
+  const { user, welcome, setWelcome } = useStateContext();
+
   const apps = [
     { id: "/estatisticas", name: "Estatísticas", img: "/icons/estatisticas.png" },
     { id: "/arquivos", name: "Arquivos", img: "/icons/folder.png" },
@@ -31,7 +37,6 @@ const Home = () => {
     navigate(id);
   };
 
-
   return (
     <div className={styles["home-container"]}>
       <div className={styles["home-container-left"]}>
@@ -42,11 +47,9 @@ const Home = () => {
 
       <div className={styles["home-container-right"]}>
         <div className={styles["home-container-top"]}>
-          <Relogio/>
+          <Relogio />
         </div>
-        <div className={styles["home-container-bottom"]}>
-          {/* bottom */}
-        </div>
+        <div className={styles["home-container-bottom"]}>{/* bottom */}</div>
       </div>
     </div>
   );

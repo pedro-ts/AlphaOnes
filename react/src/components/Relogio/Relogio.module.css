@@ -1,9 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Pixelify+Sans:wght@400..700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Pixelify+Sans:wght@400..700&display=swap');
+ */
+ @import url('https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100..900&display=swap');
 
 /* Tema base */
 :root{
-  --clock-size-min: 3rem;
-  --clock-size-max: 10rem;
+  --clock-size-min: 5rem;
+  --clock-size-max: 15rem;
   --clock-gradient: linear-gradient(
     135deg,
     #ffffff,
@@ -17,7 +19,7 @@
 
 /* Relógio */
 .relogio{
-  font-family: "Black Ops One", system-ui;
+  font-family: "Smooch Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
   font-variant-numeric: tabular-nums;
@@ -72,7 +74,10 @@
 /* Container utilitário caso queira recorte limpo do ::after */
 .relogio-wrap{
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
   isolation: isolate;
 }
 
@@ -104,4 +109,14 @@
   15%  { opacity: .35; }
   50%  { transform: translateX(120%); opacity: .2; }
   100% { transform: translateX(200%); opacity: .0; }
+}
+/* Data em pt-BR */
+.data{
+  font-family: "Smooch Sans", sans-serif;
+  font-weight: 300;
+  letter-spacing: .03em;
+  font-size: clamp(0.9rem, 2.2vw, 1.4rem);
+  color: rgba(255,255,255,0.9);
+  text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+  /* mantém minúsculas conforme norma pt-BR */
 }

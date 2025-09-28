@@ -11,7 +11,7 @@ const Login = () => {
   const [errors, setErrors] = useState(null);
   const [message, setMessage] = useState(null);
   // Importação dos set's do contexto
-  const { setUser, setToken } = useStateContext();
+  const { setUser, setToken, setExpiresAt, setWelcome } = useStateContext();
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -27,7 +27,10 @@ const Login = () => {
       .post("/login", payload)
       .then(({ data }) => {
         setUser(data.user);
-        setToken(data.token);
+        setToken(data.token.plainTextToken);
+        setExpiresAt(data.expiresAt);
+        setWelcome(true);
+        // console.log(data);
       })
       .catch((error) => {
         const response = error.response;
