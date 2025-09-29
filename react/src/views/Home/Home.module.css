@@ -1,15 +1,35 @@
-.home-container{
-    background-image: url('/home-background.jpg');
-    height: calc(100vh - var(--taskbar-height));
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: bottom;
+.home-container {
+  position: relative; /* necessário para o overlay */
+  background-image: url('/background.webp');
+  height: calc(100vh - var(--taskbar-height));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    min-width: 100vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  min-width: 100vw;
 }
+
+/* camada escura */
+.home-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.13); /* ajuste a opacidade (0.3–0.6) */
+  z-index: 0;
+}
+
+/* garante que o conteúdo fique acima da camada */
+.home-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
 .home-container .home-conatiner-left, .home-container .home-container-right{
     min-width: 50vw;
     height: 100%;

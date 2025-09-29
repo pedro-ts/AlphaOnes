@@ -1,27 +1,45 @@
 import "./Login.css";
 import axiosClient from "../../axios-client";
 import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useStateContext } from "../../context/ContextProvider";
+
+// loading
+import Loading from "../../components/Loading/Loading";
+import { useLoading } from "../../context/LoadingContext";
 
 const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
 
+  const { isLoading, label, setLabel, show, hideWithMin } = useLoading();
+
   const [errors, setErrors] = useState(null);
   const [message, setMessage] = useState(null);
   // Importação dos set's do contexto
   const { setUser, setToken, setExpiresAt, setWelcome } = useStateContext();
+  
+  useEffect(() => {
+    return () => {
+      // garante que o overlay não fica ativo após navegar
+      hideWithMin(0);
+    };
+  }, [hideWithMin]);
 
   const onSubmit = (e) => {
     e.preventDefault();
     setErrors(null);
     setMessage(null);
 
+
     const payload = {
       email: emailRef.current.value,
       password: passwordRef.current.value,
     };
+    // liga o loader
+    setLabel("Entrando...");
+    show();
+
     // Post para o backend usando o axiosClient criado em "../../axiosClient.js"
     axiosClient
       .post("/login", payload)
@@ -39,11 +57,16 @@ const Login = () => {
         } else {
           setMessage(response.data.message);
         }
+      })
+      .finally(() => {
+        // mantém no mínimo 400ms para evitar “piscar”
+        hideWithMin(400);
       });
   };
 
   return (
     <div className="login-container">
+      <Loading active={isLoading} text={label} />
       <div className="login-form-container">
         <form onSubmit={onSubmit}>
           <div className="img-login-form">
