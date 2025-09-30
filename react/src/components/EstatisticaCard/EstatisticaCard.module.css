@@ -1,0 +1,16 @@
+.card-container{
+    height: 100%;
+    width: fit-content;
+    padding: 0 1rem;
+}
+.card-container h2{
+    text-align: center;
+    color: var(--cor-terciaria);
+    font-weight: bold;
+    font-size: 3rem;
+}
+.card-container p{
+    font-size: 2rem;
+    text-align: center;
+    color: var(--cor-terciaria);
+}
