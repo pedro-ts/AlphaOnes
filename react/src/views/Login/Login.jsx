@@ -51,15 +51,22 @@ const Login = () => {
         // console.log(data);
       })
       .catch((error) => {
-        const response = error.response;
-        if (response && response.status == 422) {
+        const { response } = error;
+
+        if (response?.status === 422 && response?.data?.errors) {
           setErrors(response.data.errors);
-        } else {
+          return;
+        }
+
+        if (response?.data?.message) {
           setMessage(response.data.message);
+        } else if (response?.status === 401) {
+          setMessage("E-mail ou senha incorretos.");
+        } else {
+          setMessage("Não foi possível concluir o login. Tente novamente.");
         }
       })
       .finally(() => {
-        // mantém no mínimo 400ms para evitar “piscar”
         hideWithMin(400);
       });
   };
