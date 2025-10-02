@@ -34,5 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    // API externa do 3c
+    'externalsys' => [
+        'base_url'   => env('EXTERNAL_API_BASE_URL'),
+        'key'        => env('EXTERNAL_API_KEY'),
+        'timeout_ms' => (int) env('EXTERNAL_API_TIMEOUT_MS', 3000),
+        'retry'      => (int) env('EXTERNAL_API_RETRY', 2),
+    ],
 
 ];
