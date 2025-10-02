@@ -19,7 +19,7 @@
   gap: 14px;
   padding: 24px 28px;
   border-radius: 14px;
-  background: var(--bg-elevated, #0f1115);
+  background: var(--cor-secundaria);
   color: var(--fg-on-elevated, #fff);
   box-shadow: 0 12px 32px rgba(0,0,0,.35);
 }
@@ -50,7 +50,7 @@
   height: 320px;
   position: relative;
   transform-style: preserve-3d;
-  scale: 0.35;
+  scale: 0.425;
 }
 
 @media (max-width: 480px){
@@ -66,7 +66,7 @@
   position: absolute;
   right: 32%;
   bottom: -11px;
-  background: #e8e8e8; /* ajuste se quiser integrar ao tema */
+  background: var(--cor-secundaria); /* ajuste se quiser integrar ao tema */
   transform: translateZ(200px) rotate(var(--r));
   animation: mask var(--duration) linear forwards infinite;
 }

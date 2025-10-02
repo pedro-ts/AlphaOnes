@@ -1,9 +1,9 @@
-import FiltroEstatisticas from '../../components/FiltroEstatisticas/FiltroEstatisticas'
-import { useState } from 'react'
+import FiltroEstatisticas from "../../components/FiltroEstatisticas/FiltroEstatisticas";
+import { useState } from "react";
 // components
-import styles from './Estatisticas.module.css'
-import GraficoColunasEstatisticas from '../../components/GraficoColunasEstatisticas/GraficoColunasEstatisticas';
-import EstatisticaMainInfoConatiner from '../../components/EstatisticaMainInfoConatiner/EstatisticaMainInfoConatiner';
+import styles from "./Estatisticas.module.css";
+import GraficoColunasEstatisticas from "../../components/GraficoColunasEstatisticas/GraficoColunasEstatisticas";
+import EstatisticaMainInfoConatiner from "../../components/EstatisticaMainInfoConatiner/EstatisticaMainInfoConatiner";
 
 const Estatisticas = () => {
   const [bases, setBases] = useState([
@@ -17,35 +17,89 @@ const Estatisticas = () => {
     {
       titulo: "Taxa de completamento geral",
       valor: "39%",
-      dias: ["01/10","02/10","03/10","04/10","05/10","06/10","07/10","08/10","09/10","10/10"],
-      valores: [120,80,150,200,90,300,250,170,220,140],
+      dias: [
+        "01/10",
+        "02/10",
+        "03/10",
+        "04/10",
+        "05/10",
+        "06/10",
+        "07/10",
+        "08/10",
+        "09/10",
+        "10/10",
+      ],
+      valores: [120, 80, 150, 200, 90, 300, 250, 170, 220, 140],
     },
     {
       titulo: "Ligações feitas no dia",
       valor: "200.004",
-      dias: ["01/10","02/10","03/10","04/10","05/10","06/10","07/10","08/10","09/10","10/10"],
-      valores: [120,80,150,200,90,300,250,170,220,140],
+      dias: [
+        "01/10",
+        "02/10",
+        "03/10",
+        "04/10",
+        "05/10",
+        "06/10",
+        "07/10",
+        "08/10",
+        "09/10",
+        "10/10",
+      ],
+      valores: [120, 80, 150, 200, 90, 300, 250, 170, 220, 140],
     },
     {
       titulo: "Falhas no dia",
       valor: "130.012",
-      dias: ["01/10","02/10","03/10","04/10","05/10","06/10","07/10","08/10","09/10","10/10"],
-      valores: [120,80,150,200,90,300,250,170,220,140],
+      dias: [
+        "01/10",
+        "02/10",
+        "03/10",
+        "04/10",
+        "05/10",
+        "06/10",
+        "07/10",
+        "08/10",
+        "09/10",
+        "10/10",
+      ],
+      valores: [120, 80, 150, 200, 90, 300, 250, 170, 220, 140],
     },
     {
       titulo: "Caixas postais",
       valor: "212",
-      dias: ["01/10","02/10","03/10","04/10","05/10","06/10","07/10","08/10","09/10","10/10"],
-      valores: [120,80,150,200,90,300,250,170,220,140],
+      dias: [
+        "01/10",
+        "02/10",
+        "03/10",
+        "04/10",
+        "05/10",
+        "06/10",
+        "07/10",
+        "08/10",
+        "09/10",
+        "10/10",
+      ],
+      valores: [120, 80, 150, 200, 90, 300, 250, 170, 220, 140],
     },
     {
       titulo: "Custo telefonia diário",
       valor: "R$ 2.300",
-      dias: ["01/10","02/10","03/10","04/10","05/10","06/10","07/10","08/10","09/10","10/10"],
-      valores: [120,80,150,200,90,300,250,170,220,140],
+      dias: [
+        "01/10",
+        "02/10",
+        "03/10",
+        "04/10",
+        "05/10",
+        "06/10",
+        "07/10",
+        "08/10",
+        "09/10",
+        "10/10",
+      ],
+      valores: [120, 80, 150, 200, 90, 300, 250, 170, 220, 140],
     },
-  ]
-  );
+  ]);
   // const [mainInfos] = useState([
   //   {
   //     titulo: "Taxa de completamento geral",
@@ -73,6 +127,6 @@ const Estatisticas = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Estatisticas
+export default Estatisticas;
