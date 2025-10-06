@@ -3,13 +3,25 @@ import styles from "./EstatisticaMainInfoConatiner.module.css";
 import GraficoColunasEstatisticas from "../GraficoColunasEstatisticas/GraficoColunasEstatisticas";
 import EstatisticasCard from "../EstatisticaCard/EstatisticaCard";
 
-const EstatisticaMainInfoConatiner = ({titulo, valor, dias, valores}) => {
-  return (
-    <div className={styles["main-container"]}>
-        <GraficoColunasEstatisticas dias={dias} valores={valores} titulo={titulo}/>
-        <EstatisticasCard titulo={titulo} valor={valor}/>
-    </div>
-  );
+const EstatisticaMainInfoConatiner = ({ titulo, valor, dias, valores }) => {
+  if (titulo === "Taxa de completamento geral") {
+    return (
+      <div className={`${styles["main-container"]} ${styles["main-container-center"]}`}>
+        <EstatisticasCard titulo={titulo} valor={valor} />
+      </div>
+    );
+  } else {
+    return (
+      <div className={styles["main-container"]}>
+        <GraficoColunasEstatisticas
+          dias={dias}
+          valores={valores}
+          titulo={titulo}
+        />
+        <EstatisticasCard titulo={titulo} valor={valor} />
+      </div>
+    );
+  }
 };
 
 export default EstatisticaMainInfoConatiner;
