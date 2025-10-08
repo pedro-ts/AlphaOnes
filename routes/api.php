@@ -1,10 +1,9 @@
 <?php
 // Importar AuthController usado na Auth rota
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EstatisticasController;
 // Importar o crud api do usuario
 use App\Http\Controllers\Api\UserController;
-//importa MetricController
-use App\Http\Controllers\Api\MetricController;
 // Imports padrão
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,8 +16,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     
     Route::apiResource('/users', UserController::class);
+
+    Route::prefix('estatisticas')->group(function () {
+        Route::get('/bases', [EstatisticasController::class, 'bases']); // GET /api/estatisticas/bases
+    });
     
-    Route::get('/metrics/{slug}', [MetricController::class, 'show']);
 });
 
 // Auth rota

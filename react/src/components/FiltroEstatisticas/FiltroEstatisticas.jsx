@@ -1,40 +1,40 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styles from "./FiltroEstatisticas.module.css";
 import SelectCheckbox from "../SelectCheckbox/SelectCheckbox";
 
-export default function FiltroEstatisticas({ bases = []}) {
+export default function FiltroEstatisticas({ bases = [], onBuscar }) {
   const [inicio, setInicio] = useState("");
   const [fim, setFim] = useState("");
-  const [ordem, setOrdem] = useState("desc"); // desc = Data mais recente
-  const [basesSelecionadas, setBasesSelecionadas] = useState([]);
-  const [openCampanhas, setOpenCampanhas] = useState(false);
+  const [ordem, setOrdem] = useState("desc");
+  const [selectedNames, setSelectedNames] = useState([]);
 
-  const toggleBase = (nome) => {
-    setBasesSelecionadas((prev) =>
-      prev.includes(nome) ? prev.filter((x) => x !== nome) : [...prev, nome]
-    );
-  };
+  const idByName = useMemo(
+    () => Object.fromEntries((bases || []).map((b) => [b.name, b.id])),
+    [bases]
+  );
 
   const handleBuscar = () => {
+    const basesSelecionadas = selectedNames
+      .map((n) => idByName[n])
+      .filter((id) => id != null);
+
     const payload = { inicio, fim, basesSelecionadas, ordem };
+    onBuscar?.(payload);
     console.log(payload);
   };
 
   return (
     <div className={styles["filtro-estatisticas-container"]}>
-      {/* Linha 1: Campanhas + período */}
       <div className={styles.row}>
-        {/* Campanhas (dropdown com checkboxes) */}
         <div className={styles["div-campanhas"]}>
-              <SelectCheckbox
-                label="Campanhas"
-                items={bases}
-                value={basesSelecionadas}
-                onChange={setBasesSelecionadas}
-              />
+          <SelectCheckbox
+            label="Campanhas"
+            items={(bases || []).map((b) => b.name)} // exibe nome
+            value={selectedNames} // controla nomes
+            onChange={setSelectedNames}
+          />
         </div>
 
-        {/* Período: início e fim */}
         <div className={styles.group}>
           <label className={styles.label} htmlFor="inicio">
             início
@@ -62,7 +62,6 @@ export default function FiltroEstatisticas({ bases = []}) {
         </div>
       </div>
 
-      {/* Linha 2: Ordenar + Buscar */}
       <div className={`${styles.row2} ${styles["ordenar-container"]}`}>
         <div className={styles.groupWide}>
           <span className={styles.legend}>ordenar</span>

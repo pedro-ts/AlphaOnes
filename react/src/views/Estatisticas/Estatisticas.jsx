@@ -1,20 +1,73 @@
 import FiltroEstatisticas from "../../components/FiltroEstatisticas/FiltroEstatisticas";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 // components
 import styles from "./Estatisticas.module.css";
+// Loading
+import Loading from "../../components/Loading/Loading";
+import { useLoading } from "../../context/LoadingContext";
+// Axios
+import axiosClient from '../../axios-client'
 
 const Estatisticas = () => {
-  const [bases, setBases] = useState([
-    "governo",
-    "numeros-privados",
-    "aposentados",
-    "sao-paulo",
-  ]);
-  const [searched, setSearched] = useState(false);
+  const {setLabel, show, hideWithMin } = useLoading();
+
+  const [dados, setDados] = useState([{}, {}]);
+
+  const [ dataTeste , setDataTeste] = useState({});
+
+  const [bases, setBases] = useState([]);
+
+  const [basesObtidas, setBasesObtidas] = useState(false);
+  
+// Obtem as bases
+
+useEffect(() => {
+  const data = [];
+  (async () => {
+    setLabel("Carregando Campanhas...");
+    show();
+    try {
+      if(basesObtidas == false){
+      const { data } = await axiosClient.get("/estatisticas/bases");
+      setBases(data)
+      setBasesObtidas(true);
+      console.log("resposta:", data); // loga a resposta já recebida
+      }
+      setDataTeste(data); // use data, não a Promise
+    } catch (e) {
+      console.error(e);
+    } finally {
+      await hideWithMin(400); // se for Promise; se não, remova o await
+    }
+  })();
+
+  return () => {};
+}, []);
+
+  const [searched, setSearched] = useState(true); //deixar por padão false
+
+  const handleBuscar = async (filtro) => {
+    setLabel("Fazendo busca...");
+    show();
+
+    // setErro(null);
+    try {
+      const { data } = await api.get("/estatisticas", { params: filtro });
+      setDados(data);
+      setSearched(true);
+
+      hideWithMin(400); //finaliza loading
+    } catch (e) {
+      setErro(e?.response?.data?.message || "Falha ao buscar estatísticas");
+      setSearched(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className={styles["estatisticas-container"]}>
-      <FiltroEstatisticas bases={bases} />
+      <FiltroEstatisticas bases={bases} onBuscar={handleBuscar} />
       {/* duas divs, sendo uma par ao principal quando não se tem nenhum filtro aplicada e outra para quando temos o filtro ativado, para isso é necessario criar 2 componentes para cada uma das situações */}
       {searched === true && (
         <div className={styles["main-container-searched"]}></div>
