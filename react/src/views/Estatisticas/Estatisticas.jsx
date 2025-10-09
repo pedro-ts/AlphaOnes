@@ -7,6 +7,7 @@ import Loading from "../../components/Loading/Loading";
 import { useLoading } from "../../context/LoadingContext";
 // Axios
 import axiosClient from '../../axios-client'
+import EstatisticasCampanhaContainer from "../../components/EstatisticasCampanhaContainer/EstatisticasCampanhaContainer";
 
 const Estatisticas = () => {
   const {setLabel, show, hideWithMin } = useLoading();
@@ -31,7 +32,7 @@ useEffect(() => {
       const { data } = await axiosClient.get("/estatisticas/bases");
       setBases(data)
       setBasesObtidas(true);
-      console.log("resposta:", data); // loga a resposta já recebida
+      // console.log("resposta:", data); // loga a resposta já recebida
       }
       setDataTeste(data); // use data, não a Promise
     } catch (e) {
@@ -54,7 +55,7 @@ useEffect(() => {
     try {
       const { data } = await axiosClient.post("/estatisticas/campanha", filtro);
       setDados(data);
-      console.log(data);
+      // console.log(data);
       setSearched(true);
 
     } catch (e) {
@@ -70,7 +71,9 @@ useEffect(() => {
       <FiltroEstatisticas bases={bases} onBuscar={handleBuscar} />
       {/* duas divs, sendo uma par ao principal quando não se tem nenhum filtro aplicada e outra para quando temos o filtro ativado, para isso é necessario criar 2 componentes para cada uma das situações */}
       {searched === true && (
-        <div className={styles["main-container-searched"]}></div>
+        <div className={styles["main-container-searched"]}>
+          <EstatisticasCampanhaContainer data={dados} campanhaIds={bases}/>
+        </div>
       )}
 
       {searched == false && (
