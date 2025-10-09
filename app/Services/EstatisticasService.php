@@ -9,48 +9,25 @@ use Illuminate\Support\Facades\Http;
 
 class EstatisticasService
 {
-    // Exemplo de método
-    // public function getById(string $id): array
-    // {
-    //     $baseUrl = config('services.reports.base_url');
-
-    //     try {
-    //         $res = Http::timeout(10)
-    //             ->retry(3, 200)
-    //             ->acceptJson()
-    //             ->withHeaders([
-    //                 'Authorization' => 'Bearer ' . config('services.reports.token'),
-    //             ])
-    //             ->get("{$baseUrl}/reports/{$id}")
-    //             ->throw();
-
-    //         return $res->json();
-    //     } catch (RequestException | ConnectionException $e) {
-    //         report($e);
-    //         abort(502, 'Falha ao consultar provedor externo');
-    //     }
-    // }
-    // app/Services/EstatisticasService.php
-
+    /**
+     * Bases (sem alterações)
+     */
     public function obterBases(): array
     {
         $url = rtrim(config('services.externalsys.base_url'), '/');
         $rota = "/campaigns";
         $apiKey = config('services.externalsys.key');
         $porPagina = 100;
-        $NaoAtivas = 0; //boolean
+        $NaoAtivas = 0;
 
-        // CORRIGIDO: $url . $rota (não usar +)
         $response = Http::get($url . $rota, [
             'api_token' => $apiKey,
             'paused'    => $NaoAtivas,
             'per_page'  => $porPagina
         ]);
-        // a API pode devolver em 'data' ou a lista direta
+
         $lista = Arr::get($response, 'data', $response);
 
-
-        // retorna apenas id e name
         return array_values(array_map(
             fn($item) => [
                 'id'   => Arr::get($item, 'id'),
@@ -60,63 +37,76 @@ class EstatisticasService
         ));
     }
 
-
     /**
-     * Busca TODAS as listas e métricas de várias campanhas no período informado
-     * e devolve no formato:
-     * [
-     *   "{id_campanha}" => [
-     *      "lista1" => [...campos...],
-     *      "lista2" => [...campos...],
-     *      ...
-     *   ],
-     *   "{id_campanha_2}" => [...]
-     * ]
+     * Para cada campanha:
+     * - Busca listas/metrics (paginado)
+     * - Busca listas/qualifications (paginado)
+     * - Agrega qualificações por list.id -> grafico{ label[], values[] }
+     * - Mescla ao layout solicitado
      */
     public function obterMetricasCampanhas(array $campaignIds, string $inicio, string $fim): array
     {
         $resultado = [];
 
         foreach ($campaignIds as $campaignId) {
-            $listas = $this->coletarListasPaginadas((string)$campaignId, $inicio, $fim);
+            $campaignId = (string) $campaignId;
 
-            // monta "lista1", "lista2", ... na ordem retornada
+            // 1) métricas por lista
+            $listasMetrics = $this->coletarListasPaginadasMetrics($campaignId, $inicio, $fim);
+
+            // 2) qualificações por lista
+            $qualRows = $this->coletarListasPaginadasQualifications($campaignId, $inicio, $fim);
+
+            // 3) agrega qualificações -> arrays para Chart.js
+            $graficosPorLista = $this->montarGraficoPorLista($qualRows);
+
+            // 4) monta saida: lista1, lista2...
             $fmt = [];
             $i = 1;
-            foreach ($listas as $item) {
-                $fmt["lista{$i}"] = $this->mapaCampos($item);
+            foreach ($listasMetrics as $item) {
+                $listId = Arr::get($item, 'list.id');
+
+                $grafico = $graficosPorLista[$listId] ?? [
+                    'label'  => [],
+                    'values' => [],
+                ];
+
+                $fmt["lista{$i}"] = array_merge(
+                    $this->mapaCamposMetrics($item),
+                    ['grafico' => $grafico]
+                );
                 $i++;
             }
 
-            $resultado[(string)$campaignId] = $fmt;
+            $resultado[$campaignId] = $fmt;
         }
 
         return $resultado;
     }
 
     /**
-     * Consome a API paginada para uma campanha e período
-     * Retorna um array com todos os itens de "data"
+     * GET /campaigns/{id}/lists/metrics  (paginado)
      */
-    private function coletarListasPaginadas(string $campaignId, string $inicio, string $fim): array
+    private function coletarListasPaginadasMetrics(string $campaignId, string $inicio, string $fim): array
     {
-        $baseUrl = rtrim(config('services.externalsys.base_url'), '/'); // ex: https://3c.fluxoti.com/api/v1
+        $baseUrl = rtrim(config('services.externalsys.base_url'), '/');
         $apiKey  = config('services.externalsys.key');
 
         $pagina = 1;
         $acumulado = [];
+        $totalPaginas = 1;
 
         do {
             try {
                 $res = Http::timeout(15)
-                    ->retry(3, 250) // 3 tentativas, 250ms entre elas
+                    ->retry(3, 250)
                     ->acceptJson()
                     ->get("{$baseUrl}/campaigns/{$campaignId}/lists/metrics", [
-                        'start_date'        => $inicio,
-                        'end_date'          => $fim,
-                        'page'              => $pagina,
-                        'trashed'           => ['campaign'], // trashed[0]=campaign
-                        'api_token'         => $apiKey,
+                        'start_date' => $inicio,
+                        'end_date'   => $fim,
+                        'page'       => $pagina,
+                        'trashed'    => ['campaign'],
+                        'api_token'  => $apiKey,
                     ])
                     ->throw();
 
@@ -127,34 +117,135 @@ class EstatisticasService
                     $acumulado = array_merge($acumulado, $dados);
                 }
 
-                $paginacao   = Arr::get($json, 'meta.pagination', []);
+                $paginacao    = Arr::get($json, 'meta.pagination', []);
                 $totalPaginas = (int) Arr::get($paginacao, 'total_pages', 1);
                 $pagina++;
             } catch (RequestException | ConnectionException $e) {
                 report($e);
-                // Falha desta página: encerra o loop e devolve o que já foi possível
                 break;
             }
-        } while ($pagina <= ($totalPaginas ?? 1));
+        } while ($pagina <= $totalPaginas);
 
         return $acumulado;
     }
 
     /**
-     * Converte um item bruto da API para o layout solicitado
+     * GET /campaigns/{id}/lists/qualifications  (paginado)
+     * Retorna as linhas brutas (cada linha tem list.id e qualifications[])
      */
-    private function mapaCampos(array $item): array
+    private function coletarListasPaginadasQualifications(string $campaignId, string $inicio, string $fim): array
+    {
+        $baseUrl = rtrim(config('services.externalsys.base_url'), '/');
+        $apiKey  = config('services.externalsys.key');
+
+        $pagina = 1;
+        $acumulado = [];
+        $totalPaginas = 1;
+
+        do {
+            try {
+                $res = Http::timeout(15)
+                    ->retry(3, 250)
+                    ->acceptJson()
+                    ->get("{$baseUrl}/campaigns/{$campaignId}/lists/qualifications", [
+                        'start_date' => $inicio,
+                        'end_date'   => $fim,
+                        'page'       => $pagina,
+                        'trashed'    => ['campaign'],
+                        'api_token'  => $apiKey,
+                    ])
+                    ->throw();
+
+                $json = $res->json();
+
+                $dados = Arr::get($json, 'data', []);
+                if (is_array($dados)) {
+                    $acumulado = array_merge($acumulado, $dados);
+                }
+
+                // Algumas respostas podem não trazer meta.pagination; trata como 1 página
+                $paginacao    = Arr::get($json, 'meta.pagination', null);
+                $totalPaginas = $paginacao ? (int) Arr::get($paginacao, 'total_pages', 1) : 1;
+                $pagina++;
+            } catch (RequestException | ConnectionException $e) {
+                report($e);
+                break;
+            }
+        } while ($pagina <= $totalPaginas);
+
+        return $acumulado;
+    }
+
+    /**
+     * Agrega qualifications por list.id:
+     * - Soma counts de mesmo "name" no período
+     * - Preserva ordem de primeira ocorrência
+     * Saída: [ listId => ['label' => [...], 'values' => [...] ] ]
+     */
+    private function montarGraficoPorLista(array $qualRows): array
+    {
+        $porLista = [];
+
+        foreach ($qualRows as $row) {
+            $listId = Arr::get($row, 'list.id');
+            if ($listId === null) {
+                continue;
+            }
+
+            $quals = Arr::get($row, 'qualifications', []);
+            foreach ((array) $quals as $q) {
+                $name  = (string) Arr::get($q, 'name', '');
+                $count = (int) Arr::get($q, 'count', 0);
+                if ($name === '') {
+                    continue;
+                }
+
+                if (!isset($porLista[$listId])) {
+                    $porLista[$listId] = [
+                        'counts' => [],
+                        'order'  => [],
+                    ];
+                }
+
+                if (!array_key_exists($name, $porLista[$listId]['counts'])) {
+                    $porLista[$listId]['counts'][$name] = 0;
+                    $porLista[$listId]['order'][] = $name; // mantém ordem de 1ª aparição
+                }
+
+                $porLista[$listId]['counts'][$name] += $count;
+            }
+        }
+
+        $out = [];
+        foreach ($porLista as $listId => $bucket) {
+            $labels = $bucket['order'];
+            $values = array_map(fn($label) => (int) $bucket['counts'][$label], $labels);
+
+            $out[$listId] = [
+                'label'  => $labels, // conforme solicitado
+                'values' => $values,
+            ];
+        }
+
+        return $out;
+    }
+
+    /**
+     * Campos de métricas na forma solicitada
+     */
+    private function mapaCamposMetrics(array $item): array
     {
         return [
-            'id da lista'                     => Arr::get($item, 'list.id'),
-            'nome'                            => Arr::get($item, 'list.name'),
-            'Total telefones'                 => (int) Arr::get($item, 'phones.total', 0),
-            'Falhas'                          => (int) Arr::get($item, 'calls.failed', 0),
-            'Caixa postal pós atendimento'    => (int) Arr::get($item, 'calls.mailbox', 0),
-            'Caixa postal pré atendimento'    => (int) Arr::get($item, 'calls.not_answered_due_progress_amd', 0),
-            'Abandonadas'                     => (int) Arr::get($item, 'calls.abandoned', 0),
-            'Atendidas'                       => (int) Arr::get($item, 'connected.total', 0),
-            'Não atendidas'                   => (int) Arr::get($item, 'calls.not_answered', 0),
+            'id da lista'                  => Arr::get($item, 'list.id'),
+            'horario'                      => Arr::get($item, 'list.created_at'),
+            'nome'                         => Arr::get($item, 'list.name'),
+            'Total telefones'              => (int) Arr::get($item, 'phones.total', 0),
+            'Falhas'                       => (int) Arr::get($item, 'calls.failed', 0),
+            'Caixa postal pós atendimento' => (int) Arr::get($item, 'calls.mailbox', 0),
+            'Caixa postal pré atendimento' => (int) Arr::get($item, 'calls.not_answered_due_progress_amd', 0),
+            'Abandonadas'                  => (int) Arr::get($item, 'calls.abandoned', 0),
+            'Atendidas'                    => (int) Arr::get($item, 'connected.total', 0),
+            'Não atendidas'                => (int) Arr::get($item, 'calls.not_answered', 0),
         ];
     }
 }

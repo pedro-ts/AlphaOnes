@@ -20,13 +20,12 @@ class EstatisticasController extends Controller
     }
     public function campanha(Request $request, EstatisticasService $service)
     {
-        // Espera JSON como:
-        // { "ids": ["123","456"], "inicio": "2025-09-29", "fim": "2025-09-29" }
+        // { "ids": ["2615","..."], "inicio": "2025-10-01", "fim": "2025-10-08" }
         $ids    = (array) $request->input('ids', []);
         $inicio = (string) $request->input('inicio');
         $fim    = (string) $request->input('fim');
 
-        if (empty($ids) || empty($inicio) || empty($fim)) {
+        if (empty($ids) || $inicio === '' || $fim === '') {
             return response()->json(['error' => 'Parâmetros inválidos'], 422);
         }
 
