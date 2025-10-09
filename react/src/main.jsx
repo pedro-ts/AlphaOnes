@@ -11,11 +11,11 @@ import { ContextProvider } from "./context/ContextProvider.jsx";
 import { LoadingProvider } from "./context/LoadingContext.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+ 
     <ContextProvider>
       <LoadingProvider>
       <RouterProvider router={router} />
       </LoadingProvider>
     </ContextProvider>
-  </StrictMode>
+
 );

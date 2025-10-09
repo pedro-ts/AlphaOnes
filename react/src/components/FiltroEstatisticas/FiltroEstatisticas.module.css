@@ -159,3 +159,27 @@
 .div-campanhas{
     margin: 0 0 0 2.5rem;
 }
+/* Scroll bar */
+/* Scrollbar para QUALQUER elemento rolável dentro do filtro
+   (funciona mesmo com CSS Modules do SelectCheckbox) */
+.filtro-estatisticas-container .div-campanhas *::-webkit-scrollbar {
+  width: 12px;
+}
+.filtro-estatisticas-container .div-campanhas *::-webkit-scrollbar-track {
+  background: var(--cor-secundaria-bg);
+  border-radius: var(--radius);
+}
+.filtro-estatisticas-container .div-campanhas *::-webkit-scrollbar-thumb {
+  background-color: var(--cor-primaria);
+  border-radius: var(--radius);
+  border: 3px solid var(--cor-secundaria-bg);
+  transition: background-color 0.2s ease;
+}
+.filtro-estatisticas-container .div-campanhas *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--cor-primaria-escura);
+}
+/* Firefox */
+.filtro-estatisticas-container .div-campanhas * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cor-primaria) var(--cor-secundaria-bg);
+}
