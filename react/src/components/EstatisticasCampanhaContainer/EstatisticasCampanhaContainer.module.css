@@ -1,3 +1,22 @@
-.container{
-    background-color: var(--cor-terciaria);
+.container {
+  background-color: var(--cor-terciaria);
+  outline: 1.5px solid var(--cor-terciaria);
+  border-radius: var(--radius);
+  overflow-y: scroll;
+  height: auto;
+  max-height: none;
+  min-height: 0;
+  margin-bottom: 2rem;
+}
+
+.containerObj {
+  margin: 1rem 1rem 2.5rem 1rem;
+  background-color: var(--cor-secundaria);
+  padding: 0.5rem 0.5rem 1rem 0.5rem;
+  border-radius: var(--radius);
+}
+
+.title {
+  color: var(--cor-terciaria);
+  font-size: 0.75rem;
 }

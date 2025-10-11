@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Services\EstatisticasService;
+use App\Http\Requests\EstatisticasRequest;
+
 
 class EstatisticasController extends Controller
 {
@@ -18,18 +20,17 @@ class EstatisticasController extends Controller
         $dados = $service->obterBases();
         return response()->json($dados);
     }
-    public function campanha(Request $request, EstatisticasService $service)
+    public function campanha(EstatisticasRequest $request, EstatisticasService $service)
     {
         // { "ids": ["2615","..."], "inicio": "2025-10-01", "fim": "2025-10-08" }
-        $ids    = (array) $request->input('ids', []);
-        $inicio = (string) $request->input('inicio');
-        $fim    = (string) $request->input('fim');
+        $data = $request->validated();
 
-        if (empty($ids) || $inicio === '' || $fim === '') {
-            return response()->json(['error' => 'Parâmetros inválidos'], 422);
-        }
+        $dados = $service->obterMetricasCampanhas(
+            $data['ids'],
+            $data['inicio'],
+            $data['fim']
+        );
 
-        $dados = $service->obterMetricasCampanhas($ids, $inicio, $fim);
         return response()->json($dados);
     }
 

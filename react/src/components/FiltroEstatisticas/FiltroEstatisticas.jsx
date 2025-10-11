@@ -20,7 +20,6 @@ export default function FiltroEstatisticas({ bases = [], onBuscar }) {
 
     const payload = { inicio, fim, ids:basesSelecionadas, ordem };
     onBuscar?.(payload);
-    console.log(payload);
   };
 
   return (

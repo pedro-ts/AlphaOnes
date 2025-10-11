@@ -1,0 +1,133 @@
+.container{
+    background-color: var(--cor-primaria-bg);
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: var(--radius);
+    padding: 2 0.5rem 0 0.5rem;
+    margin-top: 3rem;
+}
+
+hr{
+  border: none;
+  width: 100%;
+  height: 0.2rem;
+  background-color: var(--cor-terciaria);
+  margin: 1.5rem 0 0.7rem 0;
+}
+h3{
+    text-align: center;
+    font-size: 1.1rem;
+    background-color: var(--cor-primaria);
+    border-radius: var(--radius);
+    padding: 0.5;
+}
+.horaContainer{
+  padding-right: 1.5rem;
+}
+/* Ligação */
+.containerLigacoes{
+    min-width: 100%;
+    display: flex;
+}
+.containerGraficoLigacoes{
+    display: flex;
+    min-width: 50%;
+    justify-content: center;
+    height: 20rem;
+}
+.containerInfoLigacoes{
+    display: flex;
+    min-width: 50%;
+}
+.containerInfoLigacoes ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 0;
+  margin: 0;
+}
+
+.containerInfoLigacoes li {
+  font-size: 1rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+/* animação de aparecer suavemente */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* atraso progressivo para cada item */
+.containerInfoLigacoes li:nth-child(1) { animation-delay: 0.1s; }
+.containerInfoLigacoes li:nth-child(2) { animation-delay: 0.3s; }
+.containerInfoLigacoes li:nth-child(3) { animation-delay: 0.5s; }
+.containerInfoLigacoes li:nth-child(4) { animation-delay: 0.7s; }
+.containerInfoLigacoes li:nth-child(5) { animation-delay: 0.9s; }
+.containerInfoLigacoes li:nth-child(6) { animation-delay: 1.1s; }
+.containerInfoLigacoes li:nth-child(7) { animation-delay: 1.3s; }
+
+.headers ul{
+    display: flex;
+    justify-content: space-between;
+}
+.headers li{
+    text-decoration: none;
+    list-style: none;
+    text-align: center;
+}
+/* Tabulação */
+.containerTabulacao{
+
+}
+.containerGraficoTabulacao{
+    height: 20rem;
+}
+.containerInfoTabulacao{
+    padding-bottom: 1rem;
+}
+
+/* ===== legenda Tabulação ===== */
+/* legenda */
+.legendList{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:8px 16px;
+}
+.legendItem{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 8px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;
+
+  opacity:0;
+  transform:translateY(6px);
+  /* anima só quando a classe .show é aplicada pelo IntersectionObserver */
+}
+.show{
+  animation:legendFadeUp .35s ease forwards;
+  animation-delay:calc(var(--delay, 0) * 1s);
+}
+@keyframes legendFadeUp{
+  to{opacity:1; transform:translateY(0);}
+}
+.colorSwatch{
+  width:14px; height:14px; border-radius:3px; flex:0 0 14px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.25);
+}
+.legendLabel{ margin-right:auto; color:#fff; font-size:.95rem; line-height:1.2; }
+.legendValue{ color:#fff; font-weight:600; font-variant-numeric:tabular-nums; }
